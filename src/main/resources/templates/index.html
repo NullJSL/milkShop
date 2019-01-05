@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- 引入样式文件和动态控制 -->
+    <link rel="stylesheet" href="https://apps.bdimg.com/libs/bootstrap/3.2.0/css/bootstrap.min.css">
+    <title>配置管理系统</title>
+</head>
+<body>
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!--<a class="topbar-logo" href="#" style="background:url('http://yunxiao.aliyun.com/extern/css/images/yunxiao-outer-logo-3.png');">/>-->
+            <a href="/" class="topbar-logo"><img src="http://yunxiao.aliyun.com/extern/css/images/yunxiao-outer-logo-3.png"></a>
+        </div>
+        <div class="collapse navbar-collapse" id="example-navbar-collapse">
+            <!--<ul class="nav navbar-nav">-->
+            <!--<li class="active"><a class="icon-bar" href="#">首页</a>-->
+            <!--</li>-->
+            <!--</ul>-->
+            <ul class="nav navbar-nav navbar-right">
+                <li><a>欢迎您,admin</a>
+                </li>
+                <li><a href="#">安全退出</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-2">
+            <a href="#" class="list-group-item active"><span class="glyphicon glyphicon-home"></span>商品管理
+            </a>
+            <a href="/api/index" class="list-group-item">
+                <!-- 小图标样式设置 -->
+                <span class="glyphicon glyphicon-search" aria-hidden="true">
+                    </span>应用绑定查询的</a>
+            <a href="/api/configHomePage" class="list-group-item">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true">
+                    </span>增加应用配置</a>
+            <a href="#" class="list-group-item">
+
+                        <span class="glyphicon glyphicon-user" aria-hidden="true">
+                    </span>个人设置</a>
+        </div>
+        <!--左边菜单栏-->
+        <div class="col-sm-10">
+            <ol class="breadcrumb">
+                <li class="active">菜单
+                </li>
+                <li class="active">应用绑定查询
+                </li>
+            </ol>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    搜索
+                </div>
+                <div class="panel-body">
+                    <form role="form" class="form-inline" id="form">
+                        <div class="form-group">
+                            <label for="name">应用Id</label>
+                            <input type="text" class="form-control" name="appId" id="appId" value="请输入应用Id"  onfocus="javascript:if(this.value=='请输入应用Id')this.value='';">
+                        </div>
+                        <div class="form-group">
+                            <label for="name">应用名称</label>
+                            <input type="text" class="form-control" name="appName" id="appName" value="请输入应用名称" onfocus="javascript:if(this.value=='请输入应用名称')this.value='';">
+                        </div>
+                        <div class="form-group">
+                            <button id="submit" type="submit" class="btn btn-default">开始搜索</button>
+                        </div>
+                        <input type="hidden" name="pn" id="pn"/>
+                    </form>
+                </div>
+            </div>
+            <!--
+                列表展示
+            -->
+            <div class="table-responsive">
+                <table class="table table-striped ">
+                    <thead>
+                    <tr>
+                        <th>应用ID</th>
+                        <th>应用名</th>
+                        <th>预期结果</th>
+                        <th>实际结果</th>
+                        <th>失败条数</th>
+                        <th>成功条数</th>
+                        <th>总条数</th>
+                        <th>应用负责人</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    #foreach ($t in $pageInfo.list)
+                    <tr>
+                        <td>$!t.appId</td>
+                        <td>$!t.appName</td>
+                        <td>
+                            #foreach ($route in $!t.routes)
+                            #if($!route.expectResult == "1")
+                            <a href="$!route.route"><img title="$!route.route" src="../static/yes.png" alt="success"></a>
+                            #else
+                            <a href="$!route.route"><img title="$!route.route" src="../static/FF6F77DB-FCA1-4090-B9E6-115239644EE6_2.png" alt="fail"></a>
+                            #end
+                            #end
+                        </td>
+                        <td>
+                            #foreach ($route in $!t.routes)
+                            #if($!route.actualResult == "1")
+                            <a href="$!route.route"><img title="$!route.route" src="../static/yes.png" alt="success"></a>
+                            #else
+                            <a href="$!route.route"><img title="$!route.route" src="../static/FF6F77DB-FCA1-4090-B9E6-115239644EE6_2.png" alt="fail"></a>
+                            #end
+                            #end
+                        </td>
+                        <td>$!t.failSize</td>
+                        <td>$!t.successSize</td>
+                        <td>$!t.totalSize</td>
+                        <td>$!t.adminUsers</td>
+                        <td>
+                            <img src="../static/chongzuo.png"    onclick="retest('$!t.appId')">
+                        </td>
+                    </tr>
+                    #end
+                    </tbody>
+                </table>
+            </div>
+            <ul class="pagination" style="float: right;">
+
+                <li>
+                    #if($!pageInfo.hasPreviousPage)
+                    <a  onclick="hasPre('$!pageInfo.pageNum')" >
+                        <span aria-hidden="true">«</span>
+                    </a>
+                    #end
+                </li>
+
+
+                <!--循环遍历连续显示的页面，若是当前页就高亮显示，并且没有链接-->
+                #foreach ($page_num in $pageInfo.navigatepageNums)
+                #if($!page_num == $!pageInfo.pageNum)
+                <li class="active"><a href="#">$!page_num</a></li>
+                #end
+                #if($!page_num != $!pageInfo.pageNum)
+                <li><a onclick="forEachPage('$!page_num')">$!page_num</a></li>
+                #end
+                #end
+
+
+                <!--下一页-->
+                <li>
+                    #if($!pageInfo.hasNextPage)
+                    <a  onclick="hasNextPage('$!pageInfo.pageNum')">
+                        <span aria-hidden="true">»</span>
+                    </a>
+                    #end
+                </li>
+
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- 底部页脚部分 -->
+<div class="footer">
+    <p class="text-center">
+        2018 &copy; 云效.
+    </p>
+</div>
+
+<!-- JavaScript 放置在文档最后面可以使页面加载速度更快 -->
+<!-- 可选: 包含 jQuery 库 -->
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<!-- 可选: 合并了 Bootstrap JavaScript 插件 -->
+<script src="https://apps.bdimg.com/libs/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</body>
+<script type=text/javascript>
+    var statiNowPageNum = 1;
+    $(document).ready(function(){
+        document.getElementById("pn").value = statiNowPageNum;
+    })
+
+
+    function retest(appId) {
+        window.location.href="/api/index?appId="+appId+"&pn="+statiNowPageNum+"&re="+1;
+    }
+    function hasNextPage(pn) {
+        var pageNum = pn*1;
+        var netNum = pageNum+1;
+        statiNowPageNum = netNum;
+        window.location.href="/api/index?pn="+netNum;
+    }
+    function hasPre(pn) {
+        var pageNum = pn*1;
+        var preNum = pageNum-1;
+        statiNowPageNum = preNum;
+        window.location.href="/api/index?pn="+preNum;
+    }
+    function forEachPage(pn) {
+        var nowPageNum = pn*1;
+        statiNowPageNum = nowPageNum;
+        window.location.href="/api/index?pn="+nowPageNum;
+    }
+
+    $("#submit").click(function(){
+
+        var appName=document.getElementById("appName").value;
+        var appId=document.getElementById("appId").value;
+        if (appName==="请输入应用名称"){
+            document.getElementById("appName").value = "";
+        }
+        if (appId==="请输入应用Id"){
+            document.getElementById("appId").value = "";
+        }
+        $.ajax({
+            url:'index',
+            type:"POST",
+            data:$('#form').serialize(),
+            success: function(data) {
+                $("#result").text(data);
+            }
+        });
+    });
+</script>
+</html>
